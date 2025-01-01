@@ -1,0 +1,27 @@
+
+#root{
+  outline:none;
+}
+
+body {
+  transition: background-color 0.3s ease;
+}
+
+body.light {
+  background-color: white;
+  color: black;
+}
+
+body.dark {
+  background-color: #121212; 
+  color: white;
+  
+}
+@media (max-width: 600px) {
+  #root {
+    width: 100%; 
+  }
+  body{
+    width: fit-content;
+  }
+}
