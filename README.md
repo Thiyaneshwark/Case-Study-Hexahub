@@ -194,3 +194,32 @@ namespace LoanManagementSystem.Context
     }
 }
 
+
+......
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
+namespace LoanManagementSystem
+{
+    public class ApplicationDbContext : DbContext
+    {
+        private readonly IConfiguration _configuration;
+
+        public ApplicationDbContext(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            string connectionString = _configuration.GetConnectionString("LoanManagementDB");
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Loan> Loans { get; set; }
+        public DbSet<HomeLoan> HomeLoans { get; set; }
+        public DbSet<CarLoan> CarLoans { get; set; }
+    }
+}
