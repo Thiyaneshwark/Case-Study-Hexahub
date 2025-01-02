@@ -143,3 +143,54 @@ public class LoanController : ControllerBase
 }
 
 
+
+using LoanManagementSystem.Entity;
+using Microsoft.EntityFrameworkCore;
+
+namespace LoanManagementSystem.Context
+{
+    public class LoanManagementContext : DbContext
+    {
+        // Constructor that accepts DbContextOptions
+        public LoanManagementContext(DbContextOptions<LoanManagementContext> options)
+            : base(options)
+        {
+        }
+
+        // DbSet properties for each entity class
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Loan> Loans { get; set; }
+        public DbSet<HomeLoan> HomeLoans { get; set; }
+        public DbSet<CarLoan> CarLoans { get; set; }
+
+        // Fluent API for table configurations
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configure relationships and constraints
+            modelBuilder.Entity<Loan>()
+                .HasOne(l => l.Customer)
+                .WithMany(c => c.Loans)
+                .HasForeignKey(l => l.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Discriminator for Loan hierarchy
+            modelBuilder.Entity<Loan>()
+                .HasDiscriminator<string>("LoanType")
+                .HasValue<HomeLoan>("HomeLoan")
+                .HasValue<CarLoan>("CarLoan");
+
+            // Enum conversion for LoanStatus
+            modelBuilder.Entity<Loan>()
+                .Property(l => l.LoanStatus)
+                .HasConversion<string>();
+
+            // Enum conversion for LoanType
+            modelBuilder.Entity<Loan>()
+                .Property(l => l.LoanType)
+                .HasConversion<string>();
+        }
+    }
+}
+
